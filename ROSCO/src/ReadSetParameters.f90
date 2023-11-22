@@ -397,27 +397,28 @@ CONTAINS
         ENDIF
 
         !----------------- CONTROLLER FLAGS ---------------------
-        CALL ParseInput(FileLines,'F_LPFType',       CntrPar%F_LPFType,         accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'F_NotchType',     CntrPar%F_NotchType,       accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'IPC_ControlMode', CntrPar%IPC_ControlMode,   accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'VS_ControlMode',  CntrPar%VS_ControlMode,    accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'PC_ControlMode',  CntrPar%PC_ControlMode,    accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'Y_ControlMode',   CntrPar%Y_ControlMode,     accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'SS_Mode',         CntrPar%SS_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'WE_Mode',         CntrPar%WE_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'PS_Mode',         CntrPar%PS_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'SD_Mode',         CntrPar%SD_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'FL_Mode',         CntrPar%FL_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'TD_Mode',         CntrPar%TD_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'Flp_Mode',        CntrPar%Flp_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'OL_Mode',         CntrPar%OL_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'PA_Mode',         CntrPar%PA_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'PF_Mode',         CntrPar%PF_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'AWC_Mode',        CntrPar%AWC_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
-        CALL ParseInput(FileLines,'Ext_Mode',        CntrPar%Ext_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
-		CALL ParseInput(FileLines,'ZMQ_Mode',        CntrPar%ZMQ_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
-		CALL ParseInput(FileLines,'CC_Mode',         CntrPar%CC_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
-		CALL ParseInput(FileLines,'StC_Mode',        CntrPar%StC_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'F_LPFType',          CntrPar%F_LPFType,         accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'F_NotchType',        CntrPar%F_NotchType,       accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'IPC_ControlMode',    CntrPar%IPC_ControlMode,   accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'WM_IPC_ControlMode', CntrPar%WM_IPC_ControlMode,   accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'VS_ControlMode',     CntrPar%VS_ControlMode,    accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'PC_ControlMode',     CntrPar%PC_ControlMode,    accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'Y_ControlMode',      CntrPar%Y_ControlMode,     accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'SS_Mode',            CntrPar%SS_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'WE_Mode',            CntrPar%WE_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'PS_Mode',            CntrPar%PS_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'SD_Mode',            CntrPar%SD_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'FL_Mode',            CntrPar%FL_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'TD_Mode',            CntrPar%TD_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'Flp_Mode',           CntrPar%Flp_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'OL_Mode',            CntrPar%OL_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'PA_Mode',            CntrPar%PA_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'PF_Mode',            CntrPar%PF_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'AWC_Mode',           CntrPar%AWC_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
+        CALL ParseInput(FileLines,'Ext_Mode',           CntrPar%Ext_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
+		CALL ParseInput(FileLines,'ZMQ_Mode',           CntrPar%ZMQ_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
+		CALL ParseInput(FileLines,'CC_Mode',            CntrPar%CC_Mode,           accINFILE(1), ErrVar, UnEc=UnEc)
+		CALL ParseInput(FileLines,'StC_Mode',           CntrPar%StC_Mode,          accINFILE(1), ErrVar, UnEc=UnEc)
         IF (ErrVar%aviFAIL < 0) RETURN
 
         !----------------- FILTER CONSTANTS ---------------------
@@ -457,6 +458,15 @@ CONTAINS
         CALL ParseAry(  FileLines,  'IPC_KI',           CntrPar%IPC_KI,             2,  accINFILE(1),   ErrVar, CntrPar%IPC_ControlMode == 0, UnEc)
         CALL ParseAry(  FileLines,  'IPC_aziOffset',    CntrPar%IPC_aziOffset,      2,  accINFILE(1),   ErrVar, CntrPar%IPC_ControlMode == 0, UnEc)
         CALL ParseInput(FileLines,  'IPC_CornerFreqAct',CntrPar%IPC_CornerFreqAct,      accINFILE(1),   ErrVar, CntrPar%IPC_ControlMode == 0, UnEc)
+        IF (ErrVar%aviFAIL < 0) RETURN
+
+        !------------------- WM IPC CONSTANTS -----------------------
+        CALL ParseInput(FileLines,  'WM_LoadFreq',       CntrPar%WM_LoadFreq,             accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(FileLines,  'WM_IPC_IntSat',       CntrPar%WM_IPC_IntSat,             accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(  FileLines,  'WM_IPC_KP',           CntrPar%WM_IPC_KP,               accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(  FileLines,  'WM_IPC_KI',           CntrPar%WM_IPC_KI,               accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(  FileLines,  'WM_IPC_aziOffset',    CntrPar%WM_IPC_aziOffset,        accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(FileLines,  'WM_IPC_CornerFreqAct',CntrPar%WM_IPC_CornerFreqAct,      accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
         IF (ErrVar%aviFAIL < 0) RETURN
 
         !------------ VS TORQUE CONTROL CONSTANTS ----------------
@@ -748,6 +758,12 @@ CONTAINS
         IF ((CntrPar%IPC_ControlMode < 0) .OR. (CntrPar%IPC_ControlMode > 2)) THEN
             ErrVar%aviFAIL = -1
             ErrVar%ErrMsg  = 'IPC_ControlMode must be 0, 1, or 2.'
+        ENDIF
+
+        ! WM_IPC_ControlMode
+        IF ((CntrPar%WM_IPC_ControlMode < 0) .OR. (CntrPar%WM_IPC_ControlMode > 1)) THEN
+            ErrVar%aviFAIL = -1
+            ErrVar%ErrMsg  = 'IPC_ControlMode must be 0, or 1.'
         ENDIF
 
         ! VS_ControlMode

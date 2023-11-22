@@ -65,7 +65,14 @@ CONTAINS
         ELSE
             LocalVar%IPC_PitComF = 0.0 ! THIS IS AN ARRAY!!
         END IF
-        
+
+        ! Find wake mixing load individual pitch control contribution
+        IF (CntrPar%WM_IPC_ControlMode >= 1) THEN
+            CALL WakeMixingLoadIPC(CntrPar, LocalVar, objInst, DebugVar, ErrVar)
+        ELSE
+            LocalVar%WM_IPC_PitComF = 0.0 ! THIS IS AN ARRAY!!
+        END IF
+
         ! Include tower fore-aft tower vibration damping control
         IF ((CntrPar%TD_Mode > 0) .OR. (CntrPar%Y_ControlMode == 2)) THEN
             CALL ForeAftDamping(CntrPar, LocalVar, objInst)
@@ -103,7 +110,7 @@ CONTAINS
         DO K = 1,LocalVar%NumBl ! Loop through all blades, add IPC contribution and limit pitch rate
             LocalVar%PitCom(K) = LocalVar%PC_PitComT + LocalVar%FA_PitCom(K) 
             LocalVar%PitCom(K) = saturate(LocalVar%PitCom(K), LocalVar%PC_MinPit, CntrPar%PC_MaxPit)                    ! Saturate the command using the pitch saturation limits
-            LocalVar%PitCom(K) = LocalVar%PitCom(K) + LocalVar%IPC_PitComF(K)                                          ! Add IPC
+            LocalVar%PitCom(K) = LocalVar%PitCom(K) + LocalVar%IPC_PitComF(K) + LocalVar%WM_IPC_PitComF(K)               ! Add IPC
             
             ! Hard IPC saturation by peak shaving limit
             IF (CntrPar%IPC_SatMode == 1) THEN
@@ -478,6 +485,79 @@ CONTAINS
         ENDIF
 
     END SUBROUTINE IPC
+!-------------------------------------------------------------------------------------------------------------------------------
+    SUBROUTINE WakeMixingLoadIPC(CntrPar, LocalVar, objInst, DebugVar, ErrVar)
+        ! Wake Mixing Load Individual pitch control subroutine
+        !   - Calculates the commanded pitch angles for IPC employed for Wake Mixing load reductions at 1P+St for downstream turbines
+
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables
+        
+        TYPE(ControlParameters),    INTENT(INOUT)       :: CntrPar
+        TYPE(LocalVariables),       INTENT(INOUT)       :: LocalVar
+        TYPE(ObjectInstances),      INTENT(INOUT)       :: objInst
+        TYPE(DebugVariables),       INTENT(INOUT)        :: DebugVar
+        TYPE(ErrorVariables),       INTENT(INOUT)        :: ErrVar
+
+        ! Local variables
+        REAL(DbKi)                  :: PitComWM_IPC(3), PitComWM_IPCF(3)
+        REAL(DbKi)                  :: axTOut, axYOut, PaxTOut, PaxYOut
+        INTEGER(IntKi)              :: i, K                                    ! Integer used to loop through gains and turbine blades
+        
+        CHARACTER(*),               PARAMETER           :: RoutineName = 'WakeMixingLoadIPC'
+
+        ! Body
+        ! Pass rootMOOPs through the Coleman transform to get the tilt and yaw moment axis
+        CALL ColemanTransform(LocalVar%rootMOOPF, LocalVar%Azimuth, NP_1, LocalVar%axisTilt_1P, LocalVar%axisYaw_1P)
+
+        ! Pass through rotating matrix
+        axTOut = cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisTilt_1P - sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisYaw_1P
+        axYOut = sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisTilt_1P + cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisYaw_1P
+
+        ! Assign control pars
+        LocalVar%WM_IPC_KP = CntrPar%WM_IPC_KP
+        LocalVar%WM_IPC_KI = CntrPar%WM_IPC_KI
+        LocalVar%WM_IPC_IntSat = CntrPar%WM_IPC_IntSat
+        
+        ! Integrate the signal and multiply with the IPC gain
+        IF (CntrPar%WM_IPC_ControlMode >= 1)  THEN
+            LocalVar%WM_IPC_axisTilt_1P = PIController(axTOut, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
+            LocalVar%WM_IPC_axisYaw_1P = PIController(axYout, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
+            
+        ELSE
+            LocalVar%WM_IPC_axisTilt_1P = 0.0
+            LocalVar%WM_IPC_axisYaw_1P = 0.0
+        ENDIF
+
+
+        ! Pass through inverse rotating matrix
+        PaxTOut = cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1P + sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1P
+        PaxYOut = - sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1P + cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1P
+
+
+        
+        ! Pass direct and quadrature axis through the inverse Coleman transform to get the commanded pitch angles
+        CALL ColemanTransformInverse(PaxTOut, PaxYOut, LocalVar%Azimuth, NP_1, CntrPar%WM_IPC_aziOffset, PitComWM_IPC)
+        
+        ! Sum nP IPC contributions and store to LocalVar data type
+        DO K = 1,LocalVar%NumBl
+    
+            ! Optionally filter the resulting signal to induce a phase delay
+            IF (CntrPar%WM_IPC_CornerFreqAct > 0.0) THEN
+                PitComWM_IPCF(K) = LPFilter(PitComWM_IPC(K), LocalVar%DT, CntrPar%WM_IPC_CornerFreqAct, LocalVar%FP, LocalVar%iStatus, LocalVar%restart, objInst%instLPF)
+            ELSE
+                PitComWM_IPCF(K) = PitComWM_IPC(K)
+            END IF
+            
+            LocalVar%WM_IPC_PitComF(K) = PitComWM_IPCF(K)
+        END DO
+
+
+        ! Add RoutineName to error message
+        IF (ErrVar%aviFAIL < 0) THEN
+            ErrVar%ErrMsg = RoutineName//':'//TRIM(ErrVar%ErrMsg)
+        ENDIF
+
+    END SUBROUTINE WakeMixingLoadIPC
 !-------------------------------------------------------------------------------------------------------------------------------
     SUBROUTINE ForeAftDamping(CntrPar, LocalVar, objInst)
         ! Fore-aft damping controller, reducing the tower fore-aft vibrations using pitch

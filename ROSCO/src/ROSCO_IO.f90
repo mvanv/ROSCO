@@ -72,6 +72,9 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(2)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(3)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(1)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(2)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(3)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_KP
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_KI
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_KD
@@ -88,6 +91,8 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_SpdErr
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisTilt_1P
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisYaw_1P
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_AxisTilt_1P
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_AxisYaw_1P
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisTilt_2P
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisYaw_2P
         WRITE( Un, IOSTAT=ErrStat) LocalVar%axisTilt_1P
@@ -98,9 +103,12 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%axisYawF_2P
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_KI
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(2)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_KP
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_IntSat
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_IntSat
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_State
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PitCom(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PitCom(2)
@@ -341,6 +349,9 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(2)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_PitComF(3)
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(1)
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(2)
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_PitComF(3)
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_KP
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_KI
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_KD
@@ -357,6 +368,8 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_SpdErr
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisTilt_1P
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisYaw_1P
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_AxisTilt_1P
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_AxisYaw_1P
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisTilt_2P
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_AxisYaw_2P
         READ( Un, IOSTAT=ErrStat) LocalVar%axisTilt_1P
@@ -367,9 +380,12 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%axisYawF_2P
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_KI
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(2)
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_KP
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_IntSat
+        READ( Un, IOSTAT=ErrStat) LocalVar%WM_IPC_IntSat
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_State
         READ( Un, IOSTAT=ErrStat) LocalVar%PitCom(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%PitCom(2)

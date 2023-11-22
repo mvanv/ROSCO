@@ -34,6 +34,13 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: IPC_KI                      ! Integral gain for the individual pitch controller, [-].
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: IPC_aziOffset               ! Phase offset added to the azimuth angle for the individual pitch controller, [rad].
     REAL(DbKi)                    :: IPC_CornerFreqAct           ! Corner frequency of the first-order actuators model, to induce a phase lag in the IPC signal {0 - Disable}, [rad/s]
+    INTEGER(IntKi)                :: WM_IPC_ControlMode             ! Turn Individual Pitch Control (IPC) for fatigue load reductions (pitch contribution) {0 - off, 1 - 1P reductions, 2 - 1P+2P reductions}
+    REAL(DbKi)                    :: WM_LoadFreq                  ! Frequency of to-be-attenuated load
+    REAL(DbKi)                    :: WM_IPC_IntSat                  ! Integrator saturation (maximum signal amplitude contrbution to pitch from IPC)
+    REAL(DbKi)                    :: WM_IPC_KP                      ! Integral gain for the individual pitch controller, [-].
+    REAL(DbKi)                    :: WM_IPC_KI                      ! Integral gain for the individual pitch controller, [-].
+    REAL(DbKi)                    :: WM_IPC_aziOffset               ! Phase offset added to the azimuth angle for the individual pitch controller, [rad].
+    REAL(DbKi)                    :: WM_IPC_CornerFreqAct           ! Corner frequency of the first-order actuators model, to induce a phase lag in the IPC signal {0 - Disable}, [rad/s]
     INTEGER(IntKi)                :: PC_ControlMode              ! Blade pitch control mode {0 - No pitch, fix to fine pitch, 1 - active PI blade pitch control}
     INTEGER(IntKi)                :: PC_GS_n                     ! Amount of gain-scheduling table entries
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: PC_GS_angles                ! Gain-schedule table - pitch angles
@@ -245,6 +252,7 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: GenArTq                     ! Electrical generator torque, for above-rated PI-control [Nm].
     REAL(DbKi)                    :: GenBrTq                     ! Electrical generator torque, for below-rated PI-control [Nm].
     REAL(DbKi)                    :: IPC_PitComF(3)              ! Commanded pitch of each blade as calculated by the individual pitch controller, F stands for low-pass filtered [rad].
+    REAL(DbKi)                    :: WM_IPC_PitComF(3)           ! Commanded pitch of each blade as calculated by the wake mixing load individual pitch controller, F stands for low-pass filtered [rad].
     REAL(DbKi)                    :: PC_KP                       ! Proportional gain for pitch controller at rated pitch (zero) [s].
     REAL(DbKi)                    :: PC_KI                       ! Integral gain for pitch controller at rated pitch (zero) [-].
     REAL(DbKi)                    :: PC_KD                       ! Differential gain for pitch controller at rated pitch (zero) [-].
@@ -259,6 +267,8 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: PC_SpdErr                   ! Current speed error (pitch control) [rad/s].
     REAL(DbKi)                    :: IPC_AxisTilt_1P             ! Integral of the direct axis, 1P
     REAL(DbKi)                    :: IPC_AxisYaw_1P              ! Integral of quadrature, 1P
+    REAL(DbKi)                    :: WM_IPC_AxisTilt_1P             ! Integral of the direct axis, 1P
+    REAL(DbKi)                    :: WM_IPC_AxisYaw_1P              ! Integral of quadrature, 1P
     REAL(DbKi)                    :: IPC_AxisTilt_2P             ! Integral of the direct axis, 2P
     REAL(DbKi)                    :: IPC_AxisYaw_2P              ! Integral of quadrature, 2P
     REAL(DbKi)                    :: axisTilt_1P                 ! Tilt moment, 1P
@@ -269,7 +279,10 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: axisYawF_2P                 ! Filtered yaw moment, 2P
     REAL(DbKi)                    :: IPC_KI(2)                   ! Integral gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_KP(2)                   ! Proportional gain for IPC, after ramp [-]
+    REAL(DbKi)                    :: WM_IPC_KI                   ! Integral gain for IPC, after ramp [-]
+    REAL(DbKi)                    :: WM_IPC_KP                   ! Proportional gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_IntSat                  ! Integrator saturation (maximum signal amplitude contrbution to pitch from IPC)
+    REAL(DbKi)                    :: WM_IPC_IntSat               ! Integrator saturation (maximum signal amplitude contrbution to pitch from IPC)
     INTEGER(IntKi)                :: PC_State                    ! State of the pitch control system
     REAL(DbKi)                    :: PitCom(3)                   ! Commanded pitch of each blade the last time the controller was called [rad].
     REAL(DbKi)                    :: PitComAct(3)                ! Actuated pitch command of each blade [rad].
