@@ -500,7 +500,7 @@ CONTAINS
 
         ! Local variables
         REAL(DbKi)                  :: PitComWM_IPC(3), PitComWM_IPCF(3)
-        REAL(DbKi)                  :: axTOut, axYOut, PaxTOut, PaxYOut
+        REAL(DbKi)                  :: axTOut, axYOut, PaxTOut, PaxYOut, phaseAx, ampAx, errAmp, errT, errY
         INTEGER(IntKi)              :: i, K                                    ! Integer used to loop through gains and turbine blades
         
         CHARACTER(*),               PARAMETER           :: RoutineName = 'WakeMixingLoadIPC'
@@ -513,6 +513,17 @@ CONTAINS
         axTOut = cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisTilt_1P - sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisYaw_1P
         axYOut = sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisTilt_1P + cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%axisYaw_1P
 
+        ! Extract phase and amplitude
+        phaseAx = atan2(axTOut,axYout)
+        ampAx = sqrt(axTOut**2 + axYout**2)
+
+        ! Subtract amplitude reference from the measured amplitude to obtain error amplitude
+        errAmp = ampAx - CntrPar%WM_IPC_Ref
+
+        ! Compute error signals
+        errT = errAmp * sin(phaseAx)
+        errY = errAmp * cos(phaseAx)
+
         ! Assign control pars
         LocalVar%WM_IPC_KP = CntrPar%WM_IPC_KP
         LocalVar%WM_IPC_KI = CntrPar%WM_IPC_KI
@@ -520,8 +531,8 @@ CONTAINS
         
         ! Integrate the signal and multiply with the IPC gain
         IF (CntrPar%WM_IPC_ControlMode >= 1)  THEN
-            LocalVar%WM_IPC_axisTilt_1P = PIController(axTOut, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
-            LocalVar%WM_IPC_axisYaw_1P = PIController(axYout, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
+            LocalVar%WM_IPC_axisTilt_1P = PIController(errT, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
+            LocalVar%WM_IPC_axisYaw_1P = PIController(errY, LocalVar%WM_IPC_KP, LocalVar%WM_IPC_KI, -LocalVar%WM_IPC_IntSat, LocalVar%WM_IPC_IntSat, LocalVar%DT, 0.0_DbKi, LocalVar%piP, LocalVar%restart, objInst%instPI) 
             
         ELSE
             LocalVar%WM_IPC_axisTilt_1P = 0.0

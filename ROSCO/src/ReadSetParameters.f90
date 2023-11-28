@@ -467,6 +467,7 @@ CONTAINS
         CALL ParseInput(  FileLines,  'WM_IPC_KI',           CntrPar%WM_IPC_KI,               accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
         CALL ParseInput(  FileLines,  'WM_IPC_aziOffset',    CntrPar%WM_IPC_aziOffset,        accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
         CALL ParseInput(FileLines,  'WM_IPC_CornerFreqAct',CntrPar%WM_IPC_CornerFreqAct,      accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
+        CALL ParseInput(FileLines,  'WM_IPC_Ref',                    CntrPar%WM_IPC_Ref,      accINFILE(1),   ErrVar, CntrPar%WM_IPC_ControlMode == 0, UnEc)
         IF (ErrVar%aviFAIL < 0) RETURN
 
         !------------ VS TORQUE CONTROL CONSTANTS ----------------
