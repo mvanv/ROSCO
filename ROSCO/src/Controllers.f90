@@ -539,29 +539,21 @@ CONTAINS
             LocalVar%WM_IPC_axisYaw_1P = 0.0
         ENDIF
 
+        ! Optionally filter the resulting signal to induce a phase delay
+        IF (CntrPar%WM_IPC_CornerFreqAct > 0.0) THEN
+            LocalVar%WM_IPC_axisTilt_1PF = LPFilter(LocalVar%WM_IPC_axisTilt_1P, LocalVar%DT, CntrPar%WM_IPC_CornerFreqAct, LocalVar%FP, LocalVar%iStatus, LocalVar%restart, objInst%instLPF)
+            LocalVar%WM_IPC_axisYaw_1PF  = LPFilter(LocalVar%WM_IPC_axisYaw_1P, LocalVar%DT, CntrPar%WM_IPC_CornerFreqAct, LocalVar%FP, LocalVar%iStatus, LocalVar%restart, objInst%instLPF)
+        ELSE
+            LocalVar%WM_IPC_axisTilt_1PF = LocalVar%WM_IPC_axisTilt_1P
+            LocalVar%WM_IPC_axisYaw_1PF = LocalVar%WM_IPC_axisYaw_1P
+        END IF
 
         ! Pass through inverse rotating matrix
-        PaxTOut = cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1P + sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1P
-        PaxYOut = - sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1P + cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1P
-
-
+        PaxTOut = cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1PF + sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1PF
+        PaxYOut = - sin(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisTilt_1PF + cos(CntrPar%WM_LoadFreq*LocalVar%Time)*LocalVar%WM_IPC_axisYaw_1PF
         
         ! Pass direct and quadrature axis through the inverse Coleman transform to get the commanded pitch angles
-        CALL ColemanTransformInverse(PaxTOut, PaxYOut, LocalVar%Azimuth, NP_1, CntrPar%WM_IPC_aziOffset, PitComWM_IPC)
-        
-        ! Sum nP IPC contributions and store to LocalVar data type
-        DO K = 1,LocalVar%NumBl
-    
-            ! Optionally filter the resulting signal to induce a phase delay
-            IF (CntrPar%WM_IPC_CornerFreqAct > 0.0) THEN
-                PitComWM_IPCF(K) = LPFilter(PitComWM_IPC(K), LocalVar%DT, CntrPar%WM_IPC_CornerFreqAct, LocalVar%FP, LocalVar%iStatus, LocalVar%restart, objInst%instLPF)
-            ELSE
-                PitComWM_IPCF(K) = PitComWM_IPC(K)
-            END IF
-            
-            LocalVar%WM_IPC_PitComF(K) = PitComWM_IPCF(K)
-        END DO
-
+        CALL ColemanTransformInverse(PaxTOut, PaxYOut, LocalVar%Azimuth, NP_1, CntrPar%WM_IPC_aziOffset, LocalVar%WM_IPC_PitComF)
 
         ! Add RoutineName to error message
         IF (ErrVar%aviFAIL < 0) THEN
